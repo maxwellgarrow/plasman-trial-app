@@ -448,7 +448,7 @@
     <div class="micro-callout" style="margin-top:1rem;">
       <div class="micro-callout-title">Micro-stop recovery potential</div>
       <div class="micro-callout-body">
-        Paint Line 1 captured <strong>1,330 micro-stops</strong> across 17 days (~78/day). Eliminating 50% through targeted maintenance recovers approximately <strong id="micro-recover">—</strong> in annual value at the documented downtime rate.
+        Paint Line 1 captured <strong>1,330 micro-stops</strong> across 17 days (~78/day). Eliminating just 10% through targeted maintenance recovers approximately <strong id="micro-recover">—</strong> in annual value at the documented downtime rate.
       </div>
     </div>
   </div>
@@ -460,8 +460,8 @@
   <div class="next-grid">
     <div class="next-card">
       <div class="next-num">01</div>
-      <div class="next-title">Tag the 1,522 stop events</div>
-      <div class="next-body">Apply root-cause codes to build the full downtime Pareto. Turns 190 hours of raw loss into a ranked action list — mechanical, changeover, load, operator.</div>
+      <div class="next-title">Digitize downtime capture — replace pen and paper</div>
+      <div class="next-body">Tag major stop events directly in Guidewheel — eliminating manual operator logs. Every extended downtime is timestamped, categorized, and trendable from day one. No clipboards, no data entry lag, no lost context.</div>
     </div>
     <div class="next-card">
       <div class="next-num">02</div>
@@ -630,7 +630,7 @@ function recalc() {
   const microStopsPerDay = 1330 / 17;
   const avgMicroMin      = (11408 * 0.52) / 1330;
   const annualMicroMin   = microStopsPerDay * 251 * avgMicroMin;
-  const microVal         = (annualMicroMin / 60) * 0.5 * COST_PER_HOUR;
+  const microVal         = (annualMicroMin / 60) * 0.1 * COST_PER_HOUR;
   document.getElementById('micro-recover').textContent = fmt(microVal);
 }
 
