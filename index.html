@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plasman × Guidewheel — End-of-Trial Recap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gw-orange: #E8500A;
+    --gw-orange-light: #FDF0EA;
+    --gw-orange-border: #F5B08A;
+    --gw-navy: #0F1C2E;
+    --gw-teal: #1D9E75;
+    --gw-teal-light: #E1F5EE;
+    --gw-teal-mid: #9FE1CB;
+    --gw-teal-dark: #085041;
+    --gw-teal-deep: #0F6E56;
+    --gw-red: #E24B4A;
+    --gw-red-light: #FCEBEB;
+    --gw-red-border: #F7C1C1;
+    --gw-amber: #BA7517;
+    --gw-amber-light: #FAEEDA;
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F1F0EC;
+    --border: rgba(15,28,46,0.12);
+    --border-med: rgba(15,28,46,0.2);
+    --text: #0F1C2E;
+    --text-secondary: #5A6272;
+    --text-tertiary: #9AA0AA;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-pill {
+    background: var(--gw-navy); color: #fff;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    padding: 5px 11px; border-radius: 4px;
+  }
+  .gw-pill {
+    background: var(--gw-orange); color: #fff;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+    padding: 5px 11px; border-radius: 4px;
+  }
+  .x-sep { color: var(--text-tertiary); font-size: 16px; }
+  .header-meta h1 { font-size: 15px; font-weight: 600; }
+  .header-meta p { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.06em; text-transform: uppercase; }
+  .trial-badge {
+    background: var(--gw-teal-light); color: var(--gw-teal-deep);
+    border: 1px solid var(--gw-teal-mid);
+    font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  /* LAYOUT */
+  .page-wrap { max-width: 1040px; margin: 0 auto; padding: 2rem; }
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-bottom: 10px;
+  }
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+  }
+  .kpi-label { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 5px; }
+  .kpi-value { font-size: 24px; font-weight: 600; line-height: 1.1; }
+  .kpi-sub { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+  .c-orange { color: var(--gw-orange); }
+  .c-red { color: var(--gw-red); }
+  .c-teal { color: var(--gw-teal); }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+  /* CHART */
+  .chart-wrap { position: relative; width: 100%; height: 210px; }
+
+  /* STOP BARS */
+  .stop-bar-item { margin-bottom: 10px; }
+  .stop-bar-row { display: flex; align-items: center; gap: 10px; }
+  .stop-bar-label { font-size: 11px; color: var(--text-secondary); min-width: 96px; }
+  .stop-bar-track { flex: 1; height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .stop-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .stop-bar-val { font-size: 12px; font-weight: 600; min-width: 38px; text-align: right; }
+  .stop-bar-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; padding-left: 106px; }
+
+  /* CYCLE */
+  .cycle-split { display: flex; gap: 2rem; align-items: flex-end; }
+  .cycle-num { font-size: 36px; font-weight: 600; line-height: 1; }
+  .cycle-lbl { font-size: 10px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .perf-pill { display: inline-block; background: var(--gw-red-light); color: var(--gw-red); font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; margin-top: 8px; }
+
+  /* INSIGHTS */
+  .insight-list { list-style: none; }
+  .insight-item { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--border); font-size: 13px; line-height: 1.55; }
+  .insight-item:first-child { border-top: none; padding-top: 0; }
+  .insight-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .dot-orange { background: var(--gw-orange); }
+  .dot-red { background: var(--gw-red); }
+  .dot-teal { background: var(--gw-teal); }
+  .dot-amber { background: var(--gw-amber); }
+
+  /* ROI SECTION */
+  .roi-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .roi-wrap h2 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .roi-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+  .cost-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--gw-red-light); border: 1px solid var(--gw-red-border);
+    border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 1.25rem;
+  }
+  .cost-row-label { font-size: 12px; color: var(--gw-red); font-weight: 600; }
+  .cost-row-val { font-size: 17px; font-weight: 600; color: var(--gw-red); font-family: 'IBM Plex Mono', monospace; }
+
+  /* MACHINE CARDS */
+  .machine-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .machine-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .machine-name-lbl { font-size: 12px; font-weight: 600; color: var(--text); }
+  .remove-btn {
+    font-size: 11px; color: var(--text-tertiary); cursor: pointer;
+    padding: 3px 8px; border: 1px solid var(--border-med); border-radius: var(--radius-sm);
+    background: var(--surface); transition: all 0.15s;
+  }
+  .remove-btn:hover { color: var(--gw-red); border-color: var(--gw-red); background: var(--gw-red-light); }
+  .machine-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .input-group { display: flex; flex-direction: column; gap: 4px; }
+  .input-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+  input[type="text"], input[type="number"] {
+    padding: 7px 10px; font-size: 13px; font-family: inherit;
+    border: 1px solid var(--border-med); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--text); width: 100%;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus, input[type="number"]:focus {
+    outline: none; border-color: var(--gw-orange);
+    box-shadow: 0 0 0 3px rgba(232,80,10,0.1);
+  }
+
+  .add-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--gw-orange-light); color: var(--gw-orange);
+    border: 1px solid var(--gw-orange-border); border-radius: var(--radius-md);
+    padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+    margin-bottom: 1.5rem; transition: all 0.15s;
+  }
+  .add-btn:hover { background: var(--gw-orange); color: #fff; border-color: var(--gw-orange); }
+
+  /* SCENARIOS */
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .scenario-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 14px; text-align: center;
+    transition: border-color 0.2s;
+  }
+  .scenario-card:hover { border-color: var(--gw-teal); }
+  .scenario-pct { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .scenario-hrs { font-size: 18px; font-weight: 600; color: var(--gw-teal); font-family: 'IBM Plex Mono', monospace; }
+  .scenario-sub { font-size: 10px; color: var(--text-secondary); margin-top: 3px; }
+
+  .roi-val-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .roi-val-card {
+    background: var(--gw-teal-light); border: 1px solid var(--gw-teal-mid);
+    border-radius: var(--radius-md); padding: 14px; text-align: center;
+  }
+  .roi-val-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gw-teal-deep); margin-bottom: 6px; }
+  .roi-val-num { font-size: 20px; font-weight: 600; color: var(--gw-teal-dark); font-family: 'IBM Plex Mono', monospace; }
+  .roi-val-sub { font-size: 10px; color: var(--gw-teal-deep); margin-top: 3px; }
+
+  .micro-callout {
+    background: var(--gw-orange-light); border: 1px solid var(--gw-orange-border);
+    border-radius: var(--radius-md); padding: 12px 14px;
+  }
+  .micro-callout-title { font-size: 11px; font-weight: 700; color: var(--gw-orange); margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .micro-callout-body { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+
+  /* WHAT'S NEXT */
+  .next-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .next-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; }
+  .next-num { font-size: 22px; font-weight: 700; color: var(--gw-orange); }
+  .next-title { font-size: 12px; font-weight: 600; margin: 6px 0 5px; }
+  .next-body { font-size: 11px; color: var(--text-secondary); line-height: 1.55; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); margin-top: 2rem;
+    padding: 1.25rem 2rem; font-size: 10px; color: var(--text-tertiary); line-height: 1.7;
+  }
+
+  /* LEGEND */
+  .chart-legend { display: flex; gap: 16px; margin-bottom: 8px; font-size: 11px; color: var(--text-secondary); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 680px) {
+    .page-wrap { padding: 1rem; }
+    .two-col, .scenario-grid, .roi-val-grid, .next-grid, .machine-inputs { grid-template-columns: 1fr; }
+    .header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 8px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <span class="logo-pill">PLASMAN</span>
+    <span class="x-sep">×</span>
+    <span class="gw-pill">Guidewheel</span>
+    <div class="header-meta">
+      <h1>End-of-Trial Recap — Paint Line 1</h1>
+      <p>Full Trial · May 5–23, 2026 · Paint Line Conveyor · Confidential</p>
+    </div>
+  </div>
+  <div class="trial-badge">Trial Complete — Day 19</div>
+</header>
+
+<main class="page-wrap">
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Runtime</div>
+      <div class="kpi-value c-orange">260.5 hrs</div>
+      <div class="kpi-sub">17 active production days</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Utilization</div>
+      <div class="kpi-value c-orange">72%</div>
+      <div class="kpi-sub">Avg 17.3 hrs/day vs 24 hr window</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Stop Events</div>
+      <div class="kpi-value c-red">1,522</div>
+      <div class="kpi-sub">All time-stamped, full trial</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Downtime</div>
+      <div class="kpi-value c-red">11,408 min</div>
+      <div class="kpi-sub">~190 hrs documented</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Cycle Time</div>
+      <div class="kpi-value c-red">48.4s</div>
+      <div class="kpi-sub">vs 40.0s standard target</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Performance vs Standard</div>
+      <div class="kpi-value c-red">83%</div>
+      <div class="kpi-sub">8.4s gap per cycle</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RUNTIME CHART -->
+  <div class="section-label">Trial runtime by day — Paint Line 1</div>
+  <div class="chart-legend">
+    <span><span class="legend-dot" style="background:#9FE1CB;"></span> Normal production day</span>
+    <span><span class="legend-dot" style="background:#F7C1C1;"></span> Low / partial day</span>
+  </div>
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="chart-wrap">
+      <canvas id="runtimeChart" role="img" aria-label="Bar chart of daily runtime hours for Paint Line 1 across the full trial, May 6 to May 23 2026">Daily runtime: May 6 19.97h, May 7 19.87h, May 8 18.65h, May 10 4.3h, May 11 16.08h, May 12 17.88h, May 13 16.57h, May 14 18.48h, May 15 15.63h, May 16 15.13h, May 17 4h, May 18 18.23h, May 19 16.33h, May 20 17.95h, May 21 17.72h, May 22 18.57h, May 23 5.12h.</canvas>
+    </div>
+  </div>
+
+  <!-- STOP EVENTS + CYCLE -->
+  <div class="two-col">
+    <div class="card">
+      <div class="section-label">Stop event breakdown — 1,522 total</div>
+      <div class="stop-bar-item">
+        <div class="stop-bar-row">
+          <span class="stop-bar-label">Micro (&lt;5 min)</span>
+          <div class="stop-bar-track"><div class="stop-bar-fill" style="width:87.4%;background:var(--gw-red);"></div></div>
+          <span class="stop-bar-val c-red">1,330</span>
+        </div>
+        <div class="stop-bar-sub">~52% of total downtime minutes · the hidden drain</div>
+      </div>
+      <div class="stop-bar-item">
+        <div class="stop-bar-row">
+          <span class="stop-bar-label">Mid (5–60 min)</span>
+          <div class="stop-bar-track"><div class="stop-bar-fill" style="width:10.6%;background:var(--gw-amber);"></div></div>
+          <span class="stop-bar-val" style="color:var(--gw-amber);">161</span>
+        </div>
+        <div class="stop-bar-sub">Medium duration events</div>
+      </div>
+      <div class="stop-bar-item">
+        <div class="stop-bar-row">
+          <span class="stop-bar-label">Major (&gt;60 min)</span>
+          <div class="stop-bar-track"><div class="stop-bar-fill" style="width:2%;background:#5A6272;"></div></div>
+          <span class="stop-bar-val" style="color:var(--text-secondary);">31</span>
+        </div>
+        <div class="stop-bar-sub">Extended downtime events</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Cycle performance</div>
+      <div class="cycle-split">
+        <div>
+          <div class="cycle-lbl">Actual avg</div>
+          <div class="cycle-num c-red">48.4s</div>
+          <div class="perf-pill">83% vs target · 8.4s gap</div>
+        </div>
+        <div>
+          <div class="cycle-lbl">Standard target</div>
+          <div class="cycle-num c-teal">40.0s</div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:10px;line-height:1.6;">1,600+ cycles/shift<br>Gap compounds every day</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY FINDINGS -->
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="section-label">Key findings — full trial</div>
+    <ul class="insight-list">
+      <li class="insight-item"><span class="insight-dot dot-orange"></span><span><strong>72% average utilization</strong> across 17 active production days — 260.5 hrs of live, timestamped runtime data collected automatically with zero IT integration.</span></li>
+      <li class="insight-item"><span class="insight-dot dot-red"></span><span><strong>1,522 stop events captured</strong>, totaling 11,408 minutes (~190 hrs) of documented downtime. Every event time-stamped — no reliance on operator recall.</span></li>
+      <li class="insight-item"><span class="insight-dot dot-red"></span><span><strong>Micro-stops dominate the loss profile</strong> — 1,330 stops under 5 minutes make up the majority of events. Individually invisible, collectively the largest source of lost throughput on the line.</span></li>
+      <li class="insight-item"><span class="insight-dot dot-amber"></span><span><strong>Cycle time running 21% over standard</strong> — 48.4s actual vs 40.0s target. At 1,600+ cycles per shift, the 8.4s gap compounds into meaningful lost capacity every single day.</span></li>
+      <li class="insight-item"><span class="insight-dot dot-teal"></span><span><strong>Tagging infrastructure ready</strong> — with root-cause codes applied, the full downtime Pareto is one step away: exactly where time is lost and why, shift by shift.</span></li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROI CALCULATOR -->
+  <div class="roi-wrap">
+    <h2>ROI Calculator</h2>
+    <p class="roi-sub">Add machines, adjust your run schedule and baseline utilization — see annual recovery value at 1%, 3%, and 5% utilization improvement.</p>
+
+    <div class="cost-row">
+      <span class="cost-row-label"><i class="ti ti-currency-dollar" aria-hidden="true"></i> Cost of downtime per hour</span>
+      <span class="cost-row-val">$1,035.38 / hr</span>
+    </div>
+
+    <div id="machines-list"></div>
+
+    <button class="add-btn" onclick="addMachine()">
+      <i class="ti ti-plus" aria-hidden="true"></i> Add machine
+    </button>
+
+    <div class="divider" style="margin:0.75rem 0;"></div>
+    <div class="section-label">Utilization improvement scenarios — annual recovery</div>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Hours and dollar value recovered per year if utilization improves from your entered baseline, across all machines.</p>
+
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <div class="scenario-pct">+1% utilization</div>
+        <div class="scenario-hrs" id="s1hrs">—</div>
+        <div class="scenario-sub" id="s1sub">hrs/yr recovered</div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-pct">+3% utilization</div>
+        <div class="scenario-hrs" id="s3hrs">—</div>
+        <div class="scenario-sub" id="s3sub">hrs/yr recovered</div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-pct">+5% utilization</div>
+        <div class="scenario-hrs" id="s5hrs">—</div>
+        <div class="scenario-sub" id="s5sub">hrs/yr recovered</div>
+      </div>
+    </div>
+
+    <div class="roi-val-grid">
+      <div class="roi-val-card">
+        <div class="roi-val-label">1% recovery / yr</div>
+        <div class="roi-val-num" id="r1">—</div>
+        <div class="roi-val-sub">annual value</div>
+      </div>
+      <div class="roi-val-card">
+        <div class="roi-val-label">3% recovery / yr</div>
+        <div class="roi-val-num" id="r3">—</div>
+        <div class="roi-val-sub">annual value</div>
+      </div>
+      <div class="roi-val-card">
+        <div class="roi-val-label">5% recovery / yr</div>
+        <div class="roi-val-num" id="r5">—</div>
+        <div class="roi-val-sub">annual value</div>
+      </div>
+    </div>
+
+    <div class="micro-callout" style="margin-top:1rem;">
+      <div class="micro-callout-title">Micro-stop recovery potential</div>
+      <div class="micro-callout-body">
+        Paint Line 1 captured <strong>1,330 micro-stops</strong> across 17 days (~78/day). Eliminating 50% through targeted maintenance recovers approximately <strong id="micro-recover">—</strong> in annual value at the documented downtime rate.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="section-label">What's next</div>
+  <div class="next-grid">
+    <div class="next-card">
+      <div class="next-num">01</div>
+      <div class="next-title">Tag the 1,522 stop events</div>
+      <div class="next-body">Apply root-cause codes to build the full downtime Pareto. Turns 190 hours of raw loss into a ranked action list — mechanical, changeover, load, operator.</div>
+    </div>
+    <div class="next-card">
+      <div class="next-num">02</div>
+      <div class="next-title">Target the micro-stop pattern</div>
+      <div class="next-body">1,330 stops under 5 minutes are the largest driver. Identify whether the pattern is mechanical, pacing, or load-related — and assign ownership to fix it.</div>
+    </div>
+    <div class="next-card">
+      <div class="next-num">03</div>
+      <div class="next-title">Expand to additional assets</div>
+      <div class="next-body">Each machine connected adds to the cross-plant picture. Identify the next highest-priority assets and bring them into the same visibility layer.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Data sourced from Guidewheel live trial (May 5–23, 2026) — Paint Line 1 conveyor, Plasman Kentwood facility.
+  Runtime from Trends export (Apr 25–May 25, 2026). Stop event analysis from issues export (1,522 events, 11,408 min).
+  Cycle time from platform shift summary (May 8, 2026). Cost of downtime: $1,035.38/hr as provided.
+  All runtime and downtime data reflects full trial duration.
+</footer>
+
+<script>
+const COST_PER_HOUR = 1035.38;
+
+const runtimeData = [
+  { label: 'May 6',  val: 19.97 },
+  { label: 'May 7',  val: 19.87 },
+  { label: 'May 8',  val: 18.65 },
+  { label: 'May 10', val: 4.3   },
+  { label: 'May 11', val: 16.08 },
+  { label: 'May 12', val: 17.88 },
+  { label: 'May 13', val: 16.57 },
+  { label: 'May 14', val: 18.48 },
+  { label: 'May 15', val: 15.63 },
+  { label: 'May 16', val: 15.13 },
+  { label: 'May 17', val: 4.0   },
+  { label: 'May 18', val: 18.23 },
+  { label: 'May 19', val: 16.33 },
+  { label: 'May 20', val: 17.95 },
+  { label: 'May 21', val: 17.72 },
+  { label: 'May 22', val: 18.57 },
+  { label: 'May 23', val: 5.12  }
+];
+
+new Chart(document.getElementById('runtimeChart'), {
+  type: 'bar',
+  data: {
+    labels: runtimeData.map(d => d.label),
+    datasets: [{
+      label: 'Runtime (hrs)',
+      data: runtimeData.map(d => d.val),
+      backgroundColor: runtimeData.map(d => d.val < 8 ? '#F7C1C1' : '#9FE1CB'),
+      borderColor:     runtimeData.map(d => d.val < 8 ? '#E24B4A' : '#1D9E75'),
+      borderWidth: 1,
+      borderRadius: 3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' hrs runtime' } }
+    },
+    scales: {
+      y: {
+        min: 0, max: 24,
+        ticks: { callback: v => v + 'h', font: { size: 11 }, color: '#9AA0AA' },
+        grid: { color: 'rgba(15,28,46,0.06)' }
+      },
+      x: {
+        ticks: { font: { size: 10 }, maxRotation: 45, autoSkip: false, color: '#9AA0AA' },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+let idCounter = 0;
+const machines = [];
+
+function addMachine(name, daysPerYear, hoursPlanned, currentUtil) {
+  idCounter++;
+  const id = idCounter;
+  machines.push({
+    id,
+    name:        name        || (id === 1 ? 'Paint Line 1' : 'Machine ' + id),
+    daysPerYear: daysPerYear || 251,
+    hoursPlanned:hoursPlanned|| (id === 1 ? 24 : 16),
+    currentUtil: currentUtil || (id === 1 ? 72 : 80)
+  });
+  render();
+  recalc();
+}
+
+function removeMachine(id) {
+  const idx = machines.findIndex(m => m.id === id);
+  if (idx >= 0) machines.splice(idx, 1);
+  render();
+  recalc();
+}
+
+function updateField(id, field, val) {
+  const m = machines.find(m => m.id === id);
+  if (m) { m[field] = isNaN(+val) ? val : +val; recalc(); }
+}
+
+function render() {
+  document.getElementById('machines-list').innerHTML = machines.map(m => `
+    <div class="machine-card" id="mc-${m.id}">
+      <div class="machine-header">
+        <span class="machine-name-lbl">${m.name}</span>
+        <button class="remove-btn" onclick="removeMachine(${m.id})">Remove</button>
+      </div>
+      <div class="machine-inputs">
+        <div class="input-group">
+          <label class="input-label">Machine name</label>
+          <input type="text" value="${m.name}" onchange="updateField(${m.id},'name',this.value)" oninput="updateField(${m.id},'name',this.value)" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Days planned / year</label>
+          <input type="number" value="${m.daysPerYear}" min="1" max="365" onchange="updateField(${m.id},'daysPerYear',+this.value)" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Hours planned / day</label>
+          <input type="number" value="${m.hoursPlanned}" min="1" max="24" step="0.5" onchange="updateField(${m.id},'hoursPlanned',+this.value)" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Current utilization (%)</label>
+          <input type="number" value="${m.currentUtil}" min="1" max="100" onchange="updateField(${m.id},'currentUtil',+this.value)" />
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function fmt(val) {
+  return '$' + Math.round(val).toLocaleString('en-US');
+}
+
+function fmtHrs(val) {
+  return Math.round(val).toLocaleString('en-US') + ' hrs';
+}
+
+function recalc() {
+  let h1 = 0, h3 = 0, h5 = 0;
+  machines.forEach(m => {
+    const planned = m.daysPerYear * m.hoursPlanned;
+    h1 += planned * 0.01;
+    h3 += planned * 0.03;
+    h5 += planned * 0.05;
+  });
+
+  const empty = machines.length === 0;
+
+  document.getElementById('s1hrs').textContent = empty ? '—' : fmtHrs(h1);
+  document.getElementById('s3hrs').textContent = empty ? '—' : fmtHrs(h3);
+  document.getElementById('s5hrs').textContent = empty ? '—' : fmtHrs(h5);
+
+  document.getElementById('r1').textContent = empty ? '—' : fmt(h1 * COST_PER_HOUR);
+  document.getElementById('r3').textContent = empty ? '—' : fmt(h3 * COST_PER_HOUR);
+  document.getElementById('r5').textContent = empty ? '—' : fmt(h5 * COST_PER_HOUR);
+
+  // Micro-stop annual recovery (50% elimination of 78/day avg micro-stops, avg ~5.5 min each)
+  const microStopsPerDay = 1330 / 17;
+  const avgMicroMin      = (11408 * 0.52) / 1330;
+  const annualMicroMin   = microStopsPerDay * 251 * avgMicroMin;
+  const microVal         = (annualMicroMin / 60) * 0.5 * COST_PER_HOUR;
+  document.getElementById('micro-recover').textContent = fmt(microVal);
+}
+
+// Pre-load Paint Line 1
+addMachine('Paint Line 1', 251, 24, 72);
+</script>
+</body>
+</html>
